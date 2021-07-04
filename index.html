@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Фигуры</title>
+</head>
+
+<body>
+    <canvas class="figures"></canvas>
+    <script>
+        "use strict"
+
+        class Figures {
+            constructor(scene) {
+                this.scene = scene;
+                this.context = this.scene.getContext('2d');
+
+                this.windowHeight = 0;
+                this.windowWidth = 0;
+
+                this.centerX = 0;
+                this.centerY = 0;
+
+                this.currAngle = 0;
+                this.radius = 0;
+                this.koef = 0;
+
+                this.onResize();
+                window.addEventListener('resize', () => this.onResize());
+                this.drawAnimation();
+
+
+            }
+
+            onResize() {
+                this.windowWidth = window.innerWidth;
+                this.windowHeight = window.innerHeight;
+
+                this.scene.width = this.windowWidth;
+                this.scene.height = this.windowHeight;
+
+                this.scene.style.width = this.windowWidth + 'px';
+                this.scene.style.height = this.windowHeight + 'px';
+
+
+                this.initParams();
+
+            }
+
+            initParams() {
+                this.centerX = this.windowWidth / 2;
+                this.centerY = this.windowHeight / 2;
+                this.radius = this.windowHeight / 16;
+                this.koef = 150;
+            }
+
+            calcCoordinates(angle, radius) {
+                return [this.centerX + Math.cos(angle) * radius, this.centerY + Math.sin(angle) * radius];
+            }
+
+            drawAnimation() {
+
+                this.context.clearRect(0, 0, this.windowWidth, this.windowHeight);
+                //rectangle
+                this.context.fillStyle = "#6495ED";
+                this.context.beginPath();
+                this.context.moveTo(this.calcCoordinates(this.currAngle, this.radius)[0],
+                    this.calcCoordinates(this.currAngle, this.radius)[1]);
+                this.context.lineTo(this.calcCoordinates(this.currAngle + this.koef, this.radius)[0],
+                    this.calcCoordinates(this.currAngle + this.koef, this.radius)[1]);
+                this.context.lineTo(this.calcCoordinates(this.currAngle + this.koef - this.koef / 4, this
+                        .windowHeight / 8)[0],
+                    this.calcCoordinates(this.currAngle + this.koef - this.koef / 4, this.windowHeight / 8)[1]);
+                this.context.lineTo(this.calcCoordinates(this.currAngle + this.koef / 4, this.windowHeight / 8)[0],
+                    this.calcCoordinates(this.currAngle + this.koef / 4, this.windowHeight / 8)[1]);
+                this.context.fill();
+
+                //treangle
+                this.context.fillStyle = "#DDA0DD";
+                this.context.beginPath();
+                this.context.moveTo(this.calcCoordinates(this.currAngle + Math.PI / 6, this.windowHeight / 8)[0],
+                    this.calcCoordinates(this.currAngle + Math.PI / 6, this.windowHeight / 8)[1]);
+                this.context.lineTo(this.calcCoordinates(this.currAngle + Math.PI / 6 + this.koef / 2, this.radius)[
+                        0],
+                    this.calcCoordinates(this.currAngle + Math.PI / 6 + this.koef / 2, this.radius)[1]);
+                this.context.lineTo(this.calcCoordinates(this.currAngle + Math.PI / 6 - this.koef / 2, this.radius)[
+                        0],
+                    this.calcCoordinates(this.currAngle + Math.PI / 6 - this.koef / 2, this.radius)[1]);
+                this.context.fill();
+
+                //circle
+                this.context.fillStyle = "#3CB371";
+                this.context.beginPath();
+                this.context.arc(this.calcCoordinates(this.currAngle + Math.PI / 2, this.windowHeight / 16)[0],
+                    this.calcCoordinates(this.currAngle + Math.PI / 2, this.windowHeight / 16)[1],
+                    this.windowHeight / 32, 0, 2 * Math.PI);
+                this.context.fill();
+
+                console.log(this.windowWidth);
+                this.currAngle += 0.01;
+                window.requestAnimationFrame(this.drawAnimation.bind(this));
+            }
+
+
+        }
+
+        const scenes = document.querySelectorAll('.figures');
+
+        for (let i = 0; scenes.length > i; i++) {
+            new Figures(scenes[i]);
+        }
+    </script>
+</body>
+
+</html>
